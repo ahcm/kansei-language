@@ -1,0 +1,42 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "kansei",
+      "camelcase": "Kansei",
+      "title": "Kansei",
+      "scope": "source.kansei",
+      "file-types": [
+        "kansei",
+        "ks"
+      ],
+      "injection-regex": "^kansei$",
+      "class-name": "TreeSitterKansei"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.1",
+    "license": "EUPL",
+    "description": "Kansei language",
+    "authors": [
+      {
+        "name": "Andreas Hauser",
+        "email": "andreas@creative-memory.net",
+        "url": "https://github.com/ahcm"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/ahcm/kansei-language",
+      "funding": "https://creative-memory.ai/"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}

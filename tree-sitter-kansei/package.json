@@ -1,0 +1,15 @@
+{
+  "name": "tree-sitter-kansei",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the Kansei language",
+  "main": "grammar.js",
+  "keywords": ["tree-sitter", "kansei"],
+  "license": "MIT",
+  "tree-sitter": [
+    {
+      "language": "kansei",
+      "scope": "source.kansei",
+      "file-types": ["ks"]
+    }
+  ]
+}
