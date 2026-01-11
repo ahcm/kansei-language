@@ -12,7 +12,12 @@ x = 10 # Inline comment
 
 ### Primitives
 - **Integer**: `1`, `42`, `-10`
+  - Default integer literals are `i64`.
+  - Use suffixes like `1i32`, `1i64`, `1i128` for signed sizes.
+  - Use suffixes like `1u32`, `1u64`, `1u128` for unsigned sizes.
 - **Float**: `1.0`, `3.14`, `-0.01`
+  - Default float literals are `f64`.
+  - Use suffixes like `1.0f32`, `1.0f64`, `1.0f128` to pick other float sizes.
 - **String**: `"Hello"`, `"World"`
 - **Boolean**: `true`, `false`
 - **Nil**: `nil`
@@ -68,6 +73,37 @@ Environment variables are available via `program.env`.
 home = program.env.HOME
 ```
 
+## Modules and `use`
+Kansei exposes native modules via the `std` namespace. The `use` keyword validates that a module path exists but does not create local bindings. Use assignment to alias.
+
+```ruby
+use std::Int64
+use std::Int128
+use std::Uint64
+use std::Uint128
+use std::Float32
+use std::Float64
+use std::Float128
+
+Int64 = std::Int64
+value = Int64.parse("42")
+Int128 = std::Int128
+big_int = Int128.parse("9007199254740993")
+Uint64 = std::Uint64
+u = Uint64.parse("42")
+Float32 = std::Float32
+f = Float32.parse("1.25")
+root32 = Float32.sqrt(9)
+Float64 = std::Float64
+pi = Float64.parse("3.14159")
+root64 = Float64.sqrt(9)
+Float128 = std::Float128
+big = Float128.parse("1.2345678901234567")
+root128 = Float128.sqrt(9)
+```
+
+The `::` operator accesses module members, similar to map dot access.
+
 ## Variables
 Variables are dynamically typed and defined on assignment.
 ```ruby
@@ -97,6 +133,19 @@ end
 ```ruby
 while x > 0
   x = x - 1
+end
+```
+
+### Loop
+`loop` repeats a fixed number of times. You can optionally name the index variable.
+
+```ruby
+loop 3
+  puts "hi"
+end
+
+loop 10 |i|
+  puts i
 end
 ```
 
@@ -205,6 +254,19 @@ sum = 0
 - `len(obj)`: Return length of String, Array, or Map.
 - `read_file(path)`: Read file content as string.
 - `write_file(path, content)`: Write string to file.
+
+## Format Strings
+Prefix a string with `f` to interpolate expressions, similar to Rust formatting.
+
+```ruby
+name = "Ada"
+count = 3
+pi = 3.14159
+msg = f"{name} has {count} items"
+short_pi = f"{pi:.2}"
+```
+
+Use `{{` and `}}` to include literal braces. Precision formatting uses `{expr:.N}`.
 
 ## Shell Commands
 Backticks execute shell commands and capture stdout (trimmed).
