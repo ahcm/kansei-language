@@ -1,6 +1,7 @@
 # Kansei Language Reference
 
-Kansei is an intuitive scripting language designed for simplicity and flexibility.
+Kansei to be an intuitive scripting language designed for simplicity and flexibility.
+Inspired by Ruby 1.8 and functional programming.
 
 ## Comments
 ```ruby
@@ -38,6 +39,7 @@ Arrays and Maps are **mutable** and use **reference semantics**. Assigning an ar
 
   # Initialization with generator function
   evens = [fn(i) i * 2 end; 5] # [0, 2, 4, 6, 8]
+  evens = [{|i| i * 2 }; 5] # same
   ```
 - **Map**: Key-value pairs (keys are strings).
   ```ruby
@@ -158,7 +160,9 @@ end
 ```
 
 ## Functions
-Functions are first-class citizens. They capture their definition environment (closures).
+Functions are first-class citizens.
+By default, functions do not implicitly capture outer variables.
+Explicit reference capture using & is required to access or modify outer bindings.
 
 ### Definition
 ```ruby
@@ -196,10 +200,8 @@ Functions can accept a block of code using `{ |params| ... }`. The function can 
 
 ```ruby
 fn repeater(n)
-  i = 0
-  while i < n
+  loop n
     yield(i)
-    i = i + 1
   end
 end
 
@@ -267,6 +269,23 @@ short_pi = f"{pi:.2}"
 ```
 
 Use `{{` and `}}` to include literal braces. Precision formatting uses `{expr:.N}`.
+
+## WASM Modules
+Use `load wasm::name` to load a WebAssembly module from `wasm/name.wasm`. The module is exposed under the `wasm` namespace.
+
+```ruby
+load wasm::Json
+Json = wasm.json
+result = Json.parse(f"{1 + 2}")
+```
+
+### WASM ABI
+- Export a `memory` and an `alloc(size: i32) -> i32`. `dealloc(ptr: i32, len: i32)` is optional.
+- For wasm-bindgen modules, `__wbindgen_malloc(size: i32, align: i32) -> i32`, `__wbindgen_free(ptr: i32, len: i32, align: i32)`, and `__wbindgen_add_to_stack_pointer(delta: i32) -> i32` are used when present.
+- String arguments are passed as `(i32 ptr, i32 len)` in UTF-8.
+- Numeric arguments map to `i32/i64/f32/f64`.
+- For string returns, export functions ending with `_str` and return an `i64` where the low 32 bits are `ptr` and high 32 bits are `len` (both `u32`). The host reads from `memory`.
+- For wasm-bindgen-style exports that include an initial `i32` retptr parameter (e.g. params are `retptr, ptr, len` and results are `[]` or `[i32]`), the host allocates 8 bytes for `(ptr, len)`, passes that retptr as the first argument, reads the returned `(ptr, len)` from memory, and frees the returned buffer with `dealloc`/`__wbindgen_free` after copying into a Kansei string.
 
 ## Shell Commands
 Backticks execute shell commands and capture stdout (trimmed).
