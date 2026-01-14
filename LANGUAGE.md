@@ -42,6 +42,7 @@ Arrays and Maps are **mutable** and use **reference semantics**. Assigning an ar
   evens = [{|i| i * 2 }; 5] # same
 
   a = [1, 2, 3]
+  copy = clone a
   a each  { |i| i + 1 } # [2, 3, 4]
   a apply { |i| i + 1 } # [1, 2, 3] original input
   ```
@@ -88,7 +89,7 @@ Environment variables are available via `program.env`.
 home = program.env.HOME
 ```
 
-## Modules and `use`
+## Modules, `use`, and `import`
 Kansei exposes native modules via the `std` namespace. The `use` keyword validates that a module path exists but does not create local bindings. Use assignment to alias.
 
 ```ruby
@@ -118,6 +119,48 @@ root128 = Float128.sqrt(9)
 ```
 
 The `::` operator accesses module members, similar to map dot access.
+
+### File modules with `import`
+Modules are file-based and loaded with `import` using a `.ks` path string:
+```ruby
+import "module::json/myjson.ks"
+```
+
+The module's exports are bound to the module namespace specified by its `export` declaration. You can alias the module namespace locally:
+```ruby
+import "module::json/myjson.ks" as json
+value = json.read_json("{\"ok\":true}")
+```
+
+Module search paths come from `KANSEI_MODULE_PATH` (colon-separated). If unset, Kansei searches in order:
+1) `<main-file-dir>/modules`
+2) `/usr/local/lib/kansai/modules`
+3) `/usr/lib/kansai/modules`
+4) `~/.local/lib/kansai/modules`
+
+Modules are cached and reloaded if the source file changes on disk.
+
+### Module exports
+Each module must declare a single export header at the top of the file:
+```ruby
+export demo::mod::sample_mod::[value, add]
+
+value = 3
+
+fn add(a, b)
+  a + b
+end
+```
+
+Exports must refer to local bindings. To re-export, bind locally first:
+```ruby
+import "demo/mod/sample_mod.ks"
+alias_add = demo::mod::sample_mod.add
+
+export demo::mod::reexport::[alias_add]
+```
+
+Missing export names are compile errors.
 
 ## Variables
 Variables are dynamically typed and defined on assignment.
