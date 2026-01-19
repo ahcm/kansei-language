@@ -81,6 +81,10 @@ name = program.name
 # The script arguments
 args = program.args
 puts args[0] # "arg1"
+
+# Exit with optional code (defaults to 0)
+program.exit()
+program.exit(1)
 ```
 
 ### Environment Variables
@@ -91,6 +95,13 @@ home = program.env.HOME
 
 ## Modules, `use`, and `import`
 Kansei exposes native modules via the `std` namespace. The `use` keyword validates that a module path exists but does not create local bindings. Use assignment to alias.
+Use `@file` or `@function` with `use/import/load` when you want those bindings visible to nested functions.
+
+`std::lib` modules are feature-gated in the Rust build. By default, all std::lib modules are enabled. To disable a module, build without defaults and opt in to the ones you want:
+
+```bash
+cargo build --no-default-features --features lib-math,lib-regex
+```
 
 ```ruby
 use std::Int64
@@ -116,13 +127,18 @@ root64 = Float64.sqrt(9)
 Float128 = std::Float128
 big = Float128.parse("1.2345678901234567")
 root128 = Float128.sqrt(9)
+
+use std::simd simd = std::simd
+simd.sum([1,2,3,4])  # -> 10
+
 ```
 
 The `::` operator accesses module members, similar to map dot access.
 
 ### Structs
 ```ruby
-struct Point {
+struct Point
+{
   x: Float64,
   y: Float64
 }
@@ -266,6 +282,29 @@ puts Bytes.len(bytes)
 puts Bytes.to_string(Bytes.from_string("hello"))
 puts Bytes.find(Bytes.from_string("hello"), Bytes.from_string("ell"))
 view = Bytes.slice_view(bytes, 0, 2)
+```
+
+### std::lib::Net
+```ruby
+use std::lib::Net
+Net = std::lib::Net
+
+conn = Net.connect("imap.example.com", 993, true)
+conn.write("NOOP\r\n")
+line = conn.read_line(4096)
+conn.close()
+```
+
+### std::lib::Tui
+```ruby
+use std::lib::Tui
+Tui = std::lib::Tui
+
+Tui.run(16, |ui, event| {
+  size = ui.size()
+  ui.paragraph(0, 0, size.width, 3, "Hello from Kansei", "Header")
+  if event.type == "key" && event.key.code == "Esc" { false } else { true }
+})
 ```
 
 ### std::lib::Mmap
@@ -425,7 +464,10 @@ x = "Now a string"
 ## Operators
 - Arithmetic: `+`, `-`, `*`, `/`
 - Comparison: `==`, `!=`, `<`, `>`
+- Boolean: `not`, `and`, `&&`, `or`, `||`
 - String Concatenation: `"Hello " + "World"`
+
+`and`/`or` are short-circuiting and treat `false`/`nil` as falsey. `&&`/`||` are short-circuiting but require boolean operands.
 
 ## Control Flow
 
@@ -535,6 +577,32 @@ f()
 # x is still 10
 ```
 
+### Visibility Keywords (`@file`, `@function`)
+By default, functions and variables are only visible in the environment they are defined in. Nested functions do not see outer locals unless explicitly allowed.
+
+- `@file` marks a binding as visible to all functions in the file.
+- `@function` marks a binding as visible to all nested functions within the enclosing function scope.
+- At top level, `@function` behaves like `@file`.
+- `use`, `import`, and `load` can be annotated with `@file` or `@function` to expose their bindings.
+
+```ruby
+@file use std::simd # can be on the same line
+@file               # but does not have to be
+fn helper(x)
+  puts std::simd.sum(x)
+end
+
+fn outer()
+  @function
+  x = 3
+  @function
+  fn inner()
+    puts x
+  end
+  inner()
+end
+```
+
 ### Reference Capture (`&`)
 To modify an outer variable or pass a variable by reference, you must use the `&` operator in both the parameter definition and the call site (for functions) or capture list (for blocks).
 
@@ -554,7 +622,7 @@ Blocks passed to functions can also capture outer variables by reference.
 
 ```ruby
 sum = 0
-[1, 2, 3].each { |val, &sum|
+[1, 2, 3] each { |val, &sum|
   sum = sum + val
 }
 ```
@@ -594,6 +662,13 @@ Json = wasm.json
 result = Json.parse(f"{1 + 2}")
 ```
 
+Select the runtime backend by setting `program.wasm_backend` before loading modules. The default is `"wasmi"`. The available backends are listed in `program.wasm_backends` (for example, `"wasmtime"` only exists when compiled with `--features wasmtime`).
+
+```ruby
+program.wasm_backend = "wasmtime"
+load wasm::Json
+```
+
 ### WASM ABI
 - Export a `memory` and an `alloc(size: i32) -> i32`. `dealloc(ptr: i32, len: i32)` is optional.
 - For wasm-bindgen modules, `__wbindgen_malloc(size: i32, align: i32) -> i32`, `__wbindgen_free(ptr: i32, len: i32, align: i32)`, and `__wbindgen_add_to_stack_pointer(delta: i32) -> i32` are used when present.
@@ -603,8 +678,10 @@ result = Json.parse(f"{1 + 2}")
 - For wasm-bindgen-style exports that include an initial `i32` retptr parameter (e.g. params are `retptr, ptr, len` and results are `[]` or `[i32]`), the host allocates 8 bytes for `(ptr, len)`, passes that retptr as the first argument, reads the returned `(ptr, len)` from memory, and frees the returned buffer with `dealloc`/`__wbindgen_free` after copying into a Kansei string.
 
 ## Shell Commands
-Backticks execute shell commands and capture stdout (trimmed).
+Backticks execute shell commands and capture stdout (trimmed). They also support `{expr}` interpolation (use `{{` and `}}` for literal braces), same as format strings.
 ```ruby
 files = `ls -la`
 puts files
+name = "Ada"
+puts `echo {name}`
 ```
