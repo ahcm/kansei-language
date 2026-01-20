@@ -46,6 +46,15 @@ Arrays and Maps are **mutable** and use **reference semantics**. Assigning an ar
   a each  { |i| i + 1 } # [2, 3, 4]
   a apply { |i| i + 1 } # [1, 2, 3] original input
   ```
+  **Specialized numeric arrays** are created when all elements are numeric and share a compatible type:
+  - **I32Array**: `i32`/`u32` values (e.g., `[1i32, 2u32]`, `[0i32; 10]`)
+  - **I64Array**: integer values (default for integer-only lists)
+  - **F32Array**: `f32` values (e.g., `[1.0f32, 2.0f32]`, `[0.0f32; 10]`)
+  - **F64Array**: floating-point values (default for float-only lists)
+
+  Numeric array literals and generators will choose the most specific type that matches all elements.
+  These specialized arrays support indexing, slicing, `len`, and iteration like `Array`, but store
+  their elements in a compact numeric representation.
 - **Map**: Key-value pairs (keys are strings).
   ```ruby
   user = {"name": "Alice", "age": 30}
