@@ -144,6 +144,46 @@ simd.sum([1,2,3,4])  # -> 10
 
 The `::` operator accesses module members, similar to map dot access.
 
+### std::kansei
+
+Interpreter related modules.
+
+### std::kansei::ast
+`std::kansei::ast` exposes AST and S-Expr helpers for tooling and metaprogramming.
+```ruby
+use std::kansei
+ast = std::kansei::ast
+
+sexpr = ast.to_sexpr("a = 1 + 2")
+ast = ast.from_sexpr(sexpr)
+source = kansei.ast.to_source(ast)
+
+value_sexpr = kansei.value.to_sexpr([1i32, 2i32])
+value = kansei.value.from_sexpr(value_sexpr)
+```
+
+Available functions:
+- `std::kansei::ast::to_sexpr(src_or_ast)` -> S-Expr string
+- `std::kansei::ast::from_sexpr(sexpr)` -> `Ast`
+- `std::kansei::ast::to_source(src_or_ast)` -> canonical source string
+- `std::kansei::ast::from_source(src)` -> `Ast`
+
+### std::kansei::value
+`std::kansei::value` exposes AST and S-Expr helpers for tooling and metaprogramming.
+```ruby
+use std::kansei value = std::kansei::value
+=> {"to_sexpr": <native function>", "from_sexpr": <native function>"}
+k> value::to_sexpr([1,2,3])
+=> "(i64array 1 2 3)"
+k> a_s = value::to_sexpr([1,2,3])
+=> "(i64array 1 2 3)"
+k> a = value::from_sexpr(a_s)
+=> [1, 2, 3]
+```
+
+- `std::kansei::value::to_sexpr(value)` -> S-Expr string
+- `std::kansei::value::from_sexpr(sexpr)` -> value
+
 ### Structs
 ```ruby
 struct Point
@@ -435,9 +475,9 @@ value = json.read_json("{\"ok\":true}")
 
 Module search paths come from `KANSEI_MODULE_PATH` (colon-separated). If unset, Kansei searches in order:
 1) `<main-file-dir>/modules`
-2) `/usr/local/lib/kansai/modules`
-3) `/usr/lib/kansai/modules`
-4) `~/.local/lib/kansai/modules`
+2) `/usr/local/lib/kansei/modules`
+3) `/usr/lib/kansei/modules`
+4) `~/.local/lib/kansei/modules`
 
 Modules are cached and reloaded if the source file changes on disk.
 
@@ -659,9 +699,9 @@ Use `{{` and `}}` to include literal braces. Precision formatting uses `{expr:.N
 ## WASM Modules
 Use `load wasm::name` to load a WebAssembly module. Kansei searches `KANSEI_WASM_PATH` (colon-separated). If unset, it looks in:
 1) `<main-file-dir>/wasm`
-2) `/usr/local/lib/kansai/wasm`
-3) `/usr/lib/kansai/wasm`
-4) `~/.local/lib/kansai/wasm`
+2) `/usr/local/lib/kansei/wasm`
+3) `/usr/lib/kansei/wasm`
+4) `~/.local/lib/kansei/wasm`
 
 The module is exposed under the `wasm` namespace.
 
