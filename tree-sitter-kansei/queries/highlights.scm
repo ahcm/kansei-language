@@ -49,6 +49,9 @@
 (struct_literal_field name: (identifier) @property)
 (struct_pattern_field name: (identifier) @property)
 (type_identifier (identifier) @type)
+(type_identifier (module_access (identifier) @type))
+(map_entry key: (string) @property)
+(map_entry key: (identifier) @property)
 
 ((identifier) @function.builtin
   (#match? @function.builtin "^(puts|print|len|read_file|write_file)$"))
