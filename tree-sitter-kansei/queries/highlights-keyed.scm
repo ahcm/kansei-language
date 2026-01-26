@@ -31,27 +31,27 @@
   "@function"
 ] @keyword
 
-(function_definition name: (identifier) @function)
-(function_definition name: (member_access member: (identifier) @function))
-(function_definition name: (module_access (identifier) @function))
-(call_expression function: (identifier) @function.call)
-(call_expression function: (member_access member: (identifier) @function.call))
-(call_expression function: (module_access (identifier) @function.call))
-(command_call method: (identifier) @function.call)
+(function_definition (function_name (identifier) @function))
+(function_definition (function_name (member_access (identifier) (identifier) @function)))
+(function_definition (function_name (module_access) @function))
+(call_expression (identifier) @function.call (arguments))
+(call_expression (member_access (identifier) (identifier) @function.call) (arguments))
+(call_expression (module_access) @function.call (arguments))
+(command_call _ (identifier) @function.call)
 
 (parameter (identifier) @variable.parameter)
 
-(assignment left: (identifier) @variable)
+(assignment (assignment_target (identifier) @variable))
 
-(struct_definition name: (identifier) @type)
-(struct_field name: (identifier) @property)
-(struct_literal type: (type_identifier) @type)
-(struct_literal_field name: (identifier) @property)
-(struct_pattern_field name: (identifier) @property)
+(struct_definition (identifier) @type)
+(struct_field (identifier) @property)
+(struct_literal (type_identifier) @type)
+(struct_literal_field (identifier) @property)
+(struct_pattern_field (identifier) @property)
 (type_identifier (identifier) @type)
-(type_identifier (module_access (identifier) @type))
-(map_entry key: (string) @property)
-(map_entry key: (identifier) @property)
+(type_identifier (module_access) @type)
+(map_entry (string) @property (_))
+(map_entry (identifier) @property (_))
 
 ((identifier) @function.builtin
   (#match? @function.builtin "^(puts|print|len|read_file|write_file)$"))
