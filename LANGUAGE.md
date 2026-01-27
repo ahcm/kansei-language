@@ -150,8 +150,7 @@ simd.sum([1,2,3,4])  # -> 10
 
 The `::` operator accesses module members, similar to map dot access.
 
-### std
-- `std::collect(count, fn, context = nil, into = nil)` -> array of results (sequential)
+## std
 
 ### std::parallel
 `std::parallel` provides parallel helpers backed by Rayon.
