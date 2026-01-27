@@ -270,260 +270,6 @@ end
 
 puts p.sum()
 ```
-
-### std::IO
-The `std::IO` module provides basic file and path utilities:
-```ruby
-use std::IO
-IO = std::IO
-
-IO.write("out.txt", "hello")
-IO.append("out.txt", "\nworld")
-puts IO.read("out.txt")
-bytes = IO.read_bytes("out.txt")
-IO.write_bytes("out.bin", bytes)
-IO.append_bytes("out.bin", bytes)
-
-puts IO.exists("out.txt")
-puts IO.cwd()
-IO.mkdirs("tmp/nested")
-IO.remove("out.txt")
-```
-
-### std::lib::clap
-`std::lib::clap` provides a small CLI parsing helper:
-```ruby
-use std::lib::clap
-clap = std::lib::clap
-
-args = ["--verbose", "--count", "3", "file.txt"]
-flags = ["--verbose"]
-options = ["--count"]
-
-parsed = clap.parse(args, flags, options)
-puts parsed.verbose
-puts parsed.count
-puts parsed.args # remaining positional args
-```
-
-### std::lib::Regex
-```ruby
-use std::lib::Regex
-Regex = std::lib::Regex
-
-puts Regex.is_match("[a-z]+", "abc123")
-match = Regex.find("[0-9]+", "abc123")
-puts match.match
-puts Regex.replace("[0-9]+", "abc123", "###")
-parts = Regex.split("\\s+", "a  b   c")
-```
-
-### std::lib::DateTime
-```ruby
-use std::lib::DateTime
-DateTime = std::lib::DateTime
-
-now = DateTime.now_ms
-puts DateTime.format(now, "%Y-%m-%d %H:%M:%S")
-```
-
-### std::lib::Crypto
-```ruby
-use std::lib::Crypto
-Crypto = std::lib::Crypto
-
-puts Crypto.sha256("hello")
-puts Crypto.blake3("hello")
-puts Crypto.hmac_sha256("key", "msg")
-puts Crypto.random_bytes(16)
-rand_bytes = Crypto.random_bytes_buf(16)
-```
-
-### std::lib::Http
-```ruby
-use std::lib::Http
-Http = std::lib::Http
-
-resp = Http.get("https://example.com")
-puts resp.status
-puts resp.body
-```
-
-### std::lib::Csv
-```ruby
-use std::lib::Csv
-Csv = std::lib::Csv
-
-rows = Csv.parse("a,b\n1,2\n")
-puts rows
-text = Csv.stringify(rows)
-```
-
-### std::lib::Path
-```ruby
-use std::lib::Path
-Path = std::lib::Path
-
-puts Path.join("/tmp", "file.txt")
-puts Path.basename("/tmp/file.txt")
-puts Path.dirname("/tmp/file.txt")
-puts Path.ext("/tmp/file.txt")
-```
-
-### std::lib::Math
-```ruby
-use std::lib::Math
-Math = std::lib::Math
-
-puts Math.sin(1.0)
-puts Math.pow(2, 8)
-```
-
-### std::lib::Bytes
-```ruby
-use std::lib::Bytes
-Bytes = std::lib::Bytes
-
-buf = Bytes.buf(4, 0)
-Bytes.set(buf, 0, 255)
-Bytes.push(buf, 1)
-Bytes.fill(buf, 3)
-Bytes.copy(buf, 1, Bytes.from_string("hi"), 0, 2)
-bytes = Bytes.freeze(buf)
-puts Bytes.len(bytes)
-puts Bytes.to_string(Bytes.from_string("hello"))
-puts Bytes.find(Bytes.from_string("hello"), Bytes.from_string("ell"))
-view = Bytes.slice_view(bytes, 0, 2)
-```
-
-### std::lib::Net
-```ruby
-use std::lib::Net
-Net = std::lib::Net
-
-conn = Net.connect("imap.example.com", 993, true)
-conn.write("NOOP\r\n")
-line = conn.read_line(4096)
-conn.close()
-```
-
-### std::lib::Tui
-```ruby
-use std::lib::Tui
-Tui = std::lib::Tui
-
-Tui.run(16, |ui, event| {
-  size = ui.size()
-  ui.paragraph(0, 0, size.width, 3, "Hello from Kansei", "Header")
-  if event.type == "key" && event.key.code == "Esc" { false } else { true }
-})
-```
-
-### std::lib::Mmap
-```ruby
-use std::lib::Mmap
-use std::lib::Bytes
-Mmap = std::lib::Mmap
-Bytes = std::lib::Bytes
-
-map = Mmap.open("data.bin", "r")
-chunk = Mmap.read(map, 0, 16)
-puts Bytes.len(chunk)
-view = Bytes.slice_view(map, 0, 16)
-```
-
-### std::lib::Polars
-```ruby
-use std::lib::Polars
-Polars = std::lib::Polars
-
-df = Polars.read_csv("data.csv")
-puts Polars.shape(df)
-puts Polars.columns(df)
-```
-
-### std::lib::Serde
-```ruby
-use std::lib::Serde
-Serde = std::lib::Serde
-
-data = Serde.parse("{\"ok\":true}")
-puts Serde.stringify(data)
-```
-
-### std::lib::Base64
-```ruby
-use std::lib::Base64
-Base64 = std::lib::Base64
-
-encoded = Base64.encode("hello")
-puts Base64.decode(encoded)
-bytes = Base64.decode_bytes(encoded)
-array = Base64.decode_array(encoded)
-```
-
-### std::lib::Uuid
-```ruby
-use std::lib::Uuid
-Uuid = std::lib::Uuid
-
-id = Uuid.v4()
-puts Uuid.is_valid(id)
-```
-
-### std::lib::Toml
-```ruby
-use std::lib::Toml
-Toml = std::lib::Toml
-
-val = Toml.parse("a = 1")
-puts Toml.stringify(val)
-```
-
-### std::lib::Yaml
-```ruby
-use std::lib::Yaml
-Yaml = std::lib::Yaml
-
-val = Yaml.parse("a: 1")
-puts Yaml.stringify(val)
-```
-
-### std::lib::Flate2
-```ruby
-use std::lib::Flate2
-Flate2 = std::lib::Flate2
-
-compressed = Flate2.compress("hello")
-puts Flate2.decompress(compressed)
-```
-
-### std::lib::Image
-```ruby
-use std::lib::Image
-Image = std::lib::Image
-
-img = Image.load_png("in.png")
-puts img.width
-Image.save_png("out.png", img.width, img.height, img.rgba)
-
-img_bytes = Image.load_png_bytes("in.png")
-Image.save_png_bytes("out.png", img_bytes.width, img_bytes.height, img_bytes.rgba)
-```
-
-### std::lib::Sqlite
-```ruby
-use std::lib::Sqlite
-Sqlite = std::lib::Sqlite
-
-db = Sqlite.open("example.db")
-Sqlite.exec(db, "create table if not exists items (id integer, name text)")
-Sqlite.exec(db, "insert into items values (1, 'a')")
-rows = Sqlite.query(db, "select id, name from items")
-rows_bytes = Sqlite.query_bytes(db, "select id, name from items")
-puts rows
-```
-
 ### File modules with `import`
 Modules are file-based and loaded with `import` using a `.ks` path string:
 ```ruby
@@ -786,6 +532,14 @@ short_pi = f"{pi:.2}"
 
 Use `{{` and `}}` to include literal braces. Precision formatting uses `{expr:.N}`.
 
+## Shell Commands
+Backticks execute shell commands and capture stdout (trimmed). They also support `{expr}` interpolation (use `{{` and `}}` for literal braces), same as format strings.
+```ruby
+files = `ls -la`
+puts files
+name = "Ada"
+puts `echo {name}`
+
 ## WASM Modules
 Use `load wasm::name` to load a WebAssembly module. Kansei searches `KANSEI_WASM_PATH` (colon-separated). If unset, it looks in:
 1) `<main-file-dir>/wasm`
@@ -815,12 +569,256 @@ load wasm::Json
 - Numeric arguments map to `i32/i64/f32/f64`.
 - For string returns, export functions ending with `_str` and return an `i64` where the low 32 bits are `ptr` and high 32 bits are `len` (both `u32`). The host reads from `memory`.
 - For wasm-bindgen-style exports that include an initial `i32` retptr parameter (e.g. params are `retptr, ptr, len` and results are `[]` or `[i32]`), the host allocates 8 bytes for `(ptr, len)`, passes that retptr as the first argument, reads the returned `(ptr, len)` from memory, and frees the returned buffer with `dealloc`/`__wbindgen_free` after copying into a Kansei string.
-
-## Shell Commands
-Backticks execute shell commands and capture stdout (trimmed). They also support `{expr}` interpolation (use `{{` and `}}` for literal braces), same as format strings.
+```
+### std::IO
+The `std::IO` module provides basic file and path utilities:
 ```ruby
-files = `ls -la`
-puts files
-name = "Ada"
-puts `echo {name}`
+use std::IO
+IO = std::IO
+
+IO.write("out.txt", "hello")
+IO.append("out.txt", "\nworld")
+puts IO.read("out.txt")
+bytes = IO.read_bytes("out.txt")
+IO.write_bytes("out.bin", bytes)
+IO.append_bytes("out.bin", bytes)
+
+puts IO.exists("out.txt")
+puts IO.cwd()
+IO.mkdirs("tmp/nested")
+IO.remove("out.txt")
+```
+
+### std::lib::clap
+`std::lib::clap` provides a small CLI parsing helper:
+```ruby
+use std::lib::clap
+clap = std::lib::clap
+
+args = ["--verbose", "--count", "3", "file.txt"]
+flags = ["--verbose"]
+options = ["--count"]
+
+parsed = clap.parse(args, flags, options)
+puts parsed.verbose
+puts parsed.count
+puts parsed.args # remaining positional args
+```
+
+### std::lib::Regex
+```ruby
+use std::lib::Regex
+Regex = std::lib::Regex
+
+puts Regex.is_match("[a-z]+", "abc123")
+match = Regex.find("[0-9]+", "abc123")
+puts match.match
+puts Regex.replace("[0-9]+", "abc123", "###")
+parts = Regex.split("\\s+", "a  b   c")
+```
+
+### std::lib::DateTime
+```ruby
+use std::lib::DateTime
+DateTime = std::lib::DateTime
+
+now = DateTime.now_ms
+puts DateTime.format(now, "%Y-%m-%d %H:%M:%S")
+```
+
+### std::lib::Crypto
+```ruby
+use std::lib::Crypto
+Crypto = std::lib::Crypto
+
+puts Crypto.sha256("hello")
+puts Crypto.blake3("hello")
+puts Crypto.hmac_sha256("key", "msg")
+puts Crypto.random_bytes(16)
+rand_bytes = Crypto.random_bytes_buf(16)
+```
+
+### std::lib::Http
+```ruby
+use std::lib::Http
+Http = std::lib::Http
+
+resp = Http.get("https://example.com")
+puts resp.status
+puts resp.body
+```
+
+### std::lib::Csv
+```ruby
+use std::lib::Csv
+Csv = std::lib::Csv
+
+rows = Csv.parse("a,b\n1,2\n")
+puts rows
+text = Csv.stringify(rows)
+```
+
+### std::lib::Path
+```ruby
+use std::lib::Path
+Path = std::lib::Path
+
+puts Path.join("/tmp", "file.txt")
+puts Path.basename("/tmp/file.txt")
+puts Path.dirname("/tmp/file.txt")
+puts Path.ext("/tmp/file.txt")
+```
+
+### std::lib::Math
+```ruby
+use std::lib::Math
+Math = std::lib::Math
+
+puts Math.sin(1.0)
+puts Math.pow(2, 8)
+```
+
+### std::lib::Bytes
+```ruby
+use std::lib::Bytes
+Bytes = std::lib::Bytes
+
+buf = Bytes.buf(4, 0)
+Bytes.set(buf, 0, 255)
+Bytes.push(buf, 1)
+Bytes.fill(buf, 3)
+Bytes.copy(buf, 1, Bytes.from_string("hi"), 0, 2)
+bytes = Bytes.freeze(buf)
+puts Bytes.len(bytes)
+puts Bytes.to_string(Bytes.from_string("hello"))
+puts Bytes.find(Bytes.from_string("hello"), Bytes.from_string("ell"))
+view = Bytes.slice_view(bytes, 0, 2)
+```
+
+### std::lib::Net
+```ruby
+use std::lib::Net
+Net = std::lib::Net
+
+conn = Net.connect("imap.example.com", 993, true)
+conn.write("NOOP\r\n")
+line = conn.read_line(4096)
+conn.close()
+```
+
+### std::lib::Tui
+```ruby
+use std::lib::Tui
+Tui = std::lib::Tui
+
+Tui.run(16, |ui, event| {
+  size = ui.size()
+  ui.paragraph(0, 0, size.width, 3, "Hello from Kansei", "Header")
+  if event.type == "key" && event.key.code == "Esc" { false } else { true }
+})
+```
+
+### std::lib::Mmap
+```ruby
+use std::lib::Mmap
+use std::lib::Bytes
+Mmap = std::lib::Mmap
+Bytes = std::lib::Bytes
+
+map = Mmap.open("data.bin", "r")
+chunk = Mmap.read(map, 0, 16)
+puts Bytes.len(chunk)
+view = Bytes.slice_view(map, 0, 16)
+```
+
+### std::lib::Polars
+```ruby
+use std::lib::Polars
+Polars = std::lib::Polars
+
+df = Polars.read_csv("data.csv")
+puts Polars.shape(df)
+puts Polars.columns(df)
+```
+
+### std::lib::Serde
+```ruby
+use std::lib::Serde
+Serde = std::lib::Serde
+
+data = Serde.parse("{\"ok\":true}")
+puts Serde.stringify(data)
+```
+
+### std::lib::Base64
+```ruby
+use std::lib::Base64
+Base64 = std::lib::Base64
+
+encoded = Base64.encode("hello")
+puts Base64.decode(encoded)
+bytes = Base64.decode_bytes(encoded)
+array = Base64.decode_array(encoded)
+```
+
+### std::lib::Uuid
+```ruby
+use std::lib::Uuid
+Uuid = std::lib::Uuid
+
+id = Uuid.v4()
+puts Uuid.is_valid(id)
+```
+
+### std::lib::Toml
+```ruby
+use std::lib::Toml
+Toml = std::lib::Toml
+
+val = Toml.parse("a = 1")
+puts Toml.stringify(val)
+```
+
+### std::lib::Yaml
+```ruby
+use std::lib::Yaml
+Yaml = std::lib::Yaml
+
+val = Yaml.parse("a: 1")
+puts Yaml.stringify(val)
+```
+
+### std::lib::Flate2
+```ruby
+use std::lib::Flate2
+Flate2 = std::lib::Flate2
+
+compressed = Flate2.compress("hello")
+puts Flate2.decompress(compressed)
+```
+
+### std::lib::Image
+```ruby
+use std::lib::Image
+Image = std::lib::Image
+
+img = Image.load_png("in.png")
+puts img.width
+Image.save_png("out.png", img.width, img.height, img.rgba)
+
+img_bytes = Image.load_png_bytes("in.png")
+Image.save_png_bytes("out.png", img_bytes.width, img_bytes.height, img_bytes.rgba)
+```
+
+### std::lib::Sqlite
+```ruby
+use std::lib::Sqlite
+Sqlite = std::lib::Sqlite
+
+db = Sqlite.open("example.db")
+Sqlite.exec(db, "create table if not exists items (id integer, name text)")
+Sqlite.exec(db, "insert into items values (1, 'a')")
+rows = Sqlite.query(db, "select id, name from items")
+rows_bytes = Sqlite.query_bytes(db, "select id, name from items")
+puts rows
 ```
