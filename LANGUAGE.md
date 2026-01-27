@@ -388,6 +388,11 @@ collect 4 into buf |i|
 end
 ```
 
+**SIMD note:** `simd.*` operations do not require aligned arrays. A `F64Array` is a normal vector
+of `f64` values with 8-byte alignment. SIMD lanes may be 64-wide (512-byte alignment), so forcing
+global alignment would increase memory overhead and complicate allocation. The SIMD helpers handle
+unaligned prefix/suffix elements safely.
+
 ### For Loop
 Iterates over Arrays (values) or Maps (keys).
 ```ruby
