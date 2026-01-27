@@ -6,7 +6,7 @@ The current reference implementation is a little faster than mruby.
 
 This repository is for documenting the language.
 
-See [Language](LANGUAGE.md).
+See [Language](LANGUAGE.md) [PDF](Kansei-Language.pdf).
 
 It supports currying:
 ```
