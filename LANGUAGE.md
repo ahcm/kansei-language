@@ -463,6 +463,36 @@ repeater(3) { |idx|
 }
 ```
 
+## Error Handling
+Kansei uses `result` to capture runtime errors and `error` to raise them.
+`result` is an expression and **always requires** an `else`.
+
+### Default Fallback
+```ruby
+y = result { i32(x) } else 1i32
+```
+
+### Error Handler
+```ruby
+data = result { IO.read("missing.txt") } else |e| {
+  puts f"{e.line}:{e.column} {e.message}"
+  puts e.source
+  ""
+}
+```
+
+### Rethrow / Wrap
+```ruby
+result { risky() } else |e| { error e }
+```
+
+Notes:
+- `result { ... }` catches **runtime** errors only (not syntax errors).
+- `result` always requires an `else` clause.
+- `else |e| { ... }` requires braces. `else <expr>` is for simple defaults.
+- Errors expose `message`, `line`, `column`, `source`, and `trace`.
+- `error e` wraps an error, preserving the original trace and adding a new frame.
+
 ## Variable Scope and References
 
 Kansei enforces strict variable scoping to prevent accidental modification of outer variables.
