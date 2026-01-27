@@ -122,6 +122,22 @@ cargo build --no-default-features --features lib-math,lib-regex
 
 The `::` operator accesses module members, similar to map dot access.
 
+### std::log
+`std::log` configures the `log(...)` builtin. The log target defaults to stderr.
+
+```ruby
+use std::log
+log = std::log
+
+log.set("app.log")                 # append (default)
+log.set("app.log", "truncate")     # overwrite
+log.set("app.log", "rotate", 1024) # rotate to app.log.1 when size >= 1024 bytes
+log.stderr()                       # back to stderr
+
+log.format("{timestamp} {message}") # timestamp is seconds.millis since UNIX epoch
+log.flush(false)                    # disable flush on every log call
+```
+
 ### std::f64(x), std::f32(x), std::i64(x), std::i32(x)`, std::u64(x), std::u32(x)
 - `std::f64(x)`, `std::f32(x)`, `std::i64(x)`, `std::i32(x)`, `std::u64(x)`, `std::u32(x)` -> casts
 These cast helpers are also availableo as globals (`f64(x)` etc).
@@ -579,9 +595,15 @@ environment, pass it to `std::parallel` or `std::kansei::ast::eval_in`.
 ## Built-in Functions
 - `puts(val)`: Print value with newline.
 - `print(val)`: Print value without newline.
+- `eputs(val)`: Print value with newline to stderr.
+- `eprint(val)`: Print value without newline to stderr.
+- `log(val)`: Print value with newline to the log device (stderr by default, or `-l/--log`).
+- `typeof(val)`: Return the runtime type name as a string.
 - `len(obj)`: Return length of String, Array, Map, or Env.
 - `read_file(path)`: Read file content as string.
 - `write_file(path, content)`: Write string to file.
+- `f64(val)`, `f32(val)`, `i64(val)`, `i32(val)`, `u64(val)`, `u32(val)`: Cast helpers (same as `std::f64` etc).
+- `error expr`: Raise a runtime error.
 
 ## Format Strings
 Prefix a string with `f` to interpolate expressions, similar to Rust formatting.
@@ -658,6 +680,11 @@ puts IO.cwd()
 IO.mkdirs("tmp/nested")
 IO.remove("out.txt")
 ```
+
+### std::File
+`std::File` mirrors `std::IO` and provides the same filesystem helpers:
+`read`, `write`, `append`, `read_bytes`, `write_bytes`, `append_bytes`,
+`exists`, `remove`, `mkdirs`, `copy`, `cwd`.
 
 ### std::lib::clap
 `std::lib::clap` provides a small CLI parsing helper:
@@ -865,6 +892,13 @@ Flate2 = std::lib::Flate2
 
 compressed = Flate2.compress("hello")
 puts Flate2.decompress(compressed)
+```
+
+### std::lib::Egui
+`std::lib::Egui` provides a lightweight UI module.
+```ruby
+use std::lib::Egui
+Egui = std::lib::Egui
 ```
 
 ### std::lib::Image
