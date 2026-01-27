@@ -24,7 +24,8 @@ x = 10 # Inline comment
 - **Nil**: `nil`
 
 ### Data Structures
-Arrays and Maps are **mutable** and use **reference semantics**. Assigning an array/map to a new variable does not copy it; both variables point to the same data.
+Arrays and Maps are **mutable** and use **reference semantics**. Assigning an
+array/map to a new variable does not copy it; both variables point to the same data.
 
 - **Array**: Ordered list of values.
   ```ruby
@@ -72,7 +73,8 @@ Arrays and Maps are **mutable** and use **reference semantics**. Assigning an ar
   h keys each { |k, &h| h[k] = h[k] + 1 }  # [2, 3]
   h keys apply { |k, &h| h[k] = h[k] + 1 } # ["a", "b"] original input
   ```
-Use `each` or `apply` with blocks to iterate. `each` returns an array of block results, while `apply` is for side effects and returns the original collection.
+Use `each` or `apply` with blocks to iterate. `each` returns an array of block
+results, while `apply` is for side effects and returns the original collection.
 
 ### Dot Syntax
 Maps can be accessed and modified using dot notation if the key is a valid identifier.
@@ -103,10 +105,14 @@ home = program.env.HOME
 ```
 
 ## Modules, `use`, and `import`
-Kansei exposes native modules via the `std` namespace. The `use` keyword validates that a module path exists but does not create local bindings. Use assignment to alias.
-Use `@file` or `@function` with `use/import/load` when you want those bindings visible to nested functions.
+Kansei exposes native modules via the `std` namespace. The `use` keyword validates
+that a module path exists but does not create local bindings. Use assignment to
+alias. Use `@file` or `@function` with `use/import/load` when you want those bindings
+visible to nested functions.
 
-`std::lib` modules are feature-gated in the Rust build. By default, all std::lib modules are enabled. To disable a module, build without defaults and opt in to the ones you want:
+`std::lib` modules are feature-gated in the Rust build. By default, all std::lib
+modules are enabled. To disable a module, build without defaults and opt in to the
+ones you want:
 
 ```bash
 cargo build --no-default-features --features lib-math,lib-regex
@@ -219,7 +225,10 @@ Available functions:
 - `std::kansei::ast::from_source(src)` -> `Ast`
 - `std::kansei::ast::eval_in(ast_or_src, env, program_or_nil)` -> value
 
-`eval_in` evaluates the AST in a fresh environment populated from a frozen `Env`. You can pass an `Env` directly or a Map/Struct (it will be frozen). No standard library is injected unless you pass it in. Pass `&program` to expose the program object, or `nil` to omit it.
+`eval_in` evaluates the AST in a fresh environment populated from a frozen `Env`. You
+can pass an `Env` directly or a Map/Struct (it will be frozen). No standard library
+is injected unless you pass it in. Pass `&program` to expose the program object, or
+`nil` to omit it.
 
 ```ruby
 use std::kansei ast = std::kansei::ast
@@ -276,13 +285,15 @@ Modules are file-based and loaded with `import` using a `.ks` path string:
 import "module::json/myjson.ks"
 ```
 
-The module's exports are bound to the module namespace specified by its `export` declaration. You can alias the module namespace locally:
+The module's exports are bound to the module namespace specified by its `export`
+declaration. You can alias the module namespace locally:
 ```ruby
 import "module::json/myjson.ks" as json
 value = json.read_json("{\"ok\":true}")
 ```
 
-Module search paths come from `KANSEI_MODULE_PATH` (colon-separated). If unset, Kansei searches in order:
+Module search paths come from `KANSEI_MODULE_PATH` (colon-separated). If unset,
+Kansei searches in order:
 1) `<main-file-dir>/modules`
 2) `/usr/local/lib/kansei/modules`
 3) `/usr/lib/kansei/modules`
@@ -325,7 +336,8 @@ x = "Now a string"
 - Boolean: `not`, `and`, `&&`, `or`, `||`
 - String Concatenation: `"Hello " + "World"`
 
-`and`/`or` are short-circuiting and treat `false`/`nil` as falsey. `&&`/`||` are short-circuiting but require boolean operands.
+`and`/`or` are short-circuiting and treat `false`/`nil` as falsey. `&&`/`||` are
+short-circuiting but require boolean operands.
 
 ## Control Flow
 
@@ -348,7 +360,8 @@ end
 ```
 
 ### Loop
-`loop` repeats a fixed number of times for side effects. You can optionally name the index variable.
+`loop` repeats a fixed number of times for side effects.
+You can optionally name the index variable.
 
 ```ruby
 loop 3
@@ -361,8 +374,8 @@ end
 ```
 
 ### Collect
-`collect` repeats a fixed number of times and returns an array of the block results. Use `into` to
-fill a pre-allocated array.
+`collect` repeats a fixed number of times and returns an array of the block results.
+Use `into` to fill a pre-allocated array.
 
 ```ruby
 vals = collect 4 |i|
@@ -421,7 +434,8 @@ res = add10(5)  # Returns 15
 ```
 
 ## Blocks and Yield
-Functions can accept a block of code using `{ |params| ... }`. The function can execute this block using `yield`.
+Functions can accept a block of code using `{ |params| ... }`. The function can
+execute this block using `yield`.
 
 ```ruby
 fn repeater(n)
@@ -440,7 +454,9 @@ repeater(3) { |idx|
 Kansei enforces strict variable scoping to prevent accidental modification of outer variables.
 
 ### Implicit Shadowing
-Assigning to a variable inside a function or block creates a new local variable, shadowing any outer variable of the same name. Implicit access to outer variables for reading is also restricted in many contexts to ensure isolation.
+Assigning to a variable inside a function or block creates a new local variable,
+shadowing any outer variable of the same name. Implicit access to outer variables for
+reading is also restricted in many contexts to ensure isolation.
 
 ```ruby
 x = 10
@@ -452,7 +468,8 @@ f()
 ```
 
 ### Visibility Keywords (`@file`, `@function`)
-By default, functions and variables are only visible in the environment they are defined in. Nested functions do not see outer locals unless explicitly allowed.
+By default, functions and variables are only visible in the environment they are
+defined in. Nested functions do not see outer locals unless explicitly allowed.
 
 - `@file` marks a binding as visible to all functions in the file.
 - `@function` marks a binding as visible to all nested functions within the enclosing function scope.
@@ -478,7 +495,9 @@ end
 ```
 
 ### Reference Capture (`&`)
-To modify an outer variable or pass a variable by reference, you must use the `&` operator in both the parameter definition and the call site (for functions) or capture list (for blocks).
+To modify an outer variable or pass a variable by reference, you must use the `&`
+operator in both the parameter definition and the call site (for functions) or
+capture list (for blocks).
 
 #### Functions
 ```ruby
@@ -510,7 +529,8 @@ env = %{ "x": 3 }
 env2 = %some_struct
 ```
 
-Env is read-only; attempts to assign into it will error. To use an Env as an environment, pass it to `std::parallel` or `std::kansei::ast::eval_in`.
+Env is read-only; attempts to assign into it will error. To use an Env as an
+environment, pass it to `std::parallel` or `std::kansei::ast::eval_in`.
 
 ## Built-in Functions
 - `puts(val)`: Print value with newline.
@@ -533,7 +553,9 @@ short_pi = f"{pi:.2}"
 Use `{{` and `}}` to include literal braces. Precision formatting uses `{expr:.N}`.
 
 ## Shell Commands
-Backticks execute shell commands and capture stdout (trimmed). They also support `{expr}` interpolation (use `{{` and `}}` for literal braces), same as format strings.
+Backticks execute shell commands and capture stdout (trimmed). They also support
+`{expr}` interpolation (use `{{` and `}}` for literal braces), same as format
+strings.
 ```ruby
 files = `ls -la`
 puts files
@@ -541,7 +563,8 @@ name = "Ada"
 puts `echo {name}`
 
 ## WASM Modules
-Use `load wasm::name` to load a WebAssembly module. Kansei searches `KANSEI_WASM_PATH` (colon-separated). If unset, it looks in:
+Use `load wasm::name` to load a WebAssembly module. Kansei searches
+`KANSEI_WASM_PATH` (colon-separated). If unset, it looks in:
 1) `<main-file-dir>/wasm`
 2) `/usr/local/lib/kansei/wasm`
 3) `/usr/lib/kansei/wasm`
@@ -555,7 +578,10 @@ Json = wasm.json
 result = Json.parse(f"{1 + 2}")
 ```
 
-Select the runtime backend by setting `program.wasm_backend` before loading modules. The default is `"wasmi"`. The available backends are listed in `program.wasm_backends` (for example, `"wasmtime"` only exists when compiled with `--features wasmtime`).
+Select the runtime backend by setting `program.wasm_backend` before loading modules.
+The default is `"wasmi"`. The available backends are listed in
+`program.wasm_backends` (for example, `"wasmtime"` only exists when compiled with
+`--features wasmtime`).
 
 ```ruby
 program.wasm_backend = "wasmtime"
