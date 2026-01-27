@@ -118,6 +118,20 @@ ones you want:
 cargo build --no-default-features --features lib-math,lib-regex
 ```
 
+## std
+
+The `::` operator accesses module members, similar to map dot access.
+
+### std::f64(x), std::f32(x), std::i64(x), std::i32(x)`, std::u64(x), std::u32(x)
+- `std::f64(x)`, `std::f32(x)`, `std::i64(x)`, `std::i32(x)`, `std::u64(x)`, `std::u32(x)` -> casts
+These cast helpers are also availableo as globals (`f64(x)` etc).
+Integer casts do not accept floats (use rounding) Out-of-range values will error.
+These work also with strings, e.g. `f64("1.0")`
+
+### std::Int64 std::Int128 std::Uint64 std::Uint128 std::Float32 std::Float64 std::Float128
+
+Somewhat redundant to the shortform modules (e.g. std::f64() but many more operations.
+
 ```ruby
 use std::Int64
 use std::Int128
@@ -147,10 +161,6 @@ use std::simd simd = std::simd
 simd.sum([1,2,3,4])  # -> 10
 
 ```
-
-The `::` operator accesses module members, similar to map dot access.
-
-## std
 
 ### std::parallel
 `std::parallel` provides parallel helpers backed by Rayon.
