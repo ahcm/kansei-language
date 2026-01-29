@@ -112,6 +112,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "env_literal"
+        },
+        {
+          "type": "SYMBOL",
           "name": "struct_literal"
         },
         {
@@ -1176,6 +1180,31 @@
         }
       ]
     },
+    "env_literal": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "%{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "map_entry_list"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
     "struct_definition": {
       "type": "SEQ",
       "members": [
@@ -1750,6 +1779,10 @@
               {
                 "type": "STRING",
                 "value": "-"
+              },
+              {
+                "type": "STRING",
+                "value": "%"
               }
             ]
           },

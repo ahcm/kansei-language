@@ -63,6 +63,7 @@ module.exports = grammar({
         $.module_access,
         $.array,
         $.map,
+        $.env_literal,
         $.struct_literal,
         $.closure_literal,
         $.reference,
@@ -242,6 +243,9 @@ module.exports = grammar({
     map_entry: ($) =>
       seq(field("key", choice($.string, $.identifier)), ":", field("value", $._expression)),
 
+    env_literal: ($) =>
+      seq("%{", optional($.map_entry_list), "}"),
+
     struct_definition: ($) =>
       seq(
         "struct",
@@ -316,7 +320,7 @@ module.exports = grammar({
     unary_expression: ($) =>
       prec(
         PREC.unary,
-        seq(choice("not", "-"), field("argument", $._expression))
+        seq(choice("not", "-", "%"), field("argument", $._expression))
       ),
 
     boolean: () => choice("true", "false"),
