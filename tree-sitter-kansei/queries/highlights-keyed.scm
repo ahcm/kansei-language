@@ -50,8 +50,8 @@
 (struct_pattern_field (identifier) @property)
 (type_identifier (identifier) @type)
 (type_identifier (module_access) @type)
-(map_entry (string) @property (_))
-(map_entry (identifier) @property (_))
+(map_entry (string) @string)
+(map_entry (identifier) @property)
 
 ((identifier) @function.builtin
   (#match? @function.builtin "^(puts|print|len|read_file|write_file)$"))
